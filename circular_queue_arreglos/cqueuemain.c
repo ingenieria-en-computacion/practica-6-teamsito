@@ -1,67 +1,32 @@
-#include "colacircular.h"
 #include <stdio.h>
+#include "circularqueue.h"
 
-ColaCircular ColaCircular_Vacia() {
-    ColaCircular C;
-    C.head = -1;
-    C.tail = -1;
-    C.len = 0;
-    return C;
-}
+int main() {
+    ColaCircular C = ColaCircular_Vacia();
 
-bool ColaCircular_esVacia(ColaCircular C) {
-    return C.len == 0;
-}
+    C = ColaCircular_Enqueue(C, 10);
+    C = ColaCircular_Enqueue(C, 20);
+    C = ColaCircular_Enqueue(C, 30);
 
-bool ColaCircular_esLlena(ColaCircular C) {
-    return C.len == TAM;
-}
+    printf("Primer elemento: %d\n", ColaCircular_First(C));
+    printf("Último elemento: %d\n", ColaCircular_Last(C));
 
-ColaCircular ColaCircular_Enqueue(ColaCircular C, int d) {
-    if (ColaCircular_esLlena(C)) {
-        printf("La cola está llena\n");
-        return C;
+    C = ColaCircular_Dequeue(C);
+    printf("Después de un dequeue:\n");
+    printf("Primer elemento: %d\n", ColaCircular_First(C));
+    printf("Último elemento: %d\n", ColaCircular_Last(C));
+
+    // Encolando más elementos para ver comportamiento circular
+    for (int i = 40; i <= 60; i += 10) {
+        C = ColaCircular_Enqueue(C, i);
     }
 
-    if (ColaCircular_esVacia(C)) {
-        C.head = 0;
-        C.tail = 0;
-    } else {
-        C.tail = (C.tail + 1) % TAM;
+    printf("Elementos actuales en la cola:\n");
+    while (!ColaCircular_esVacia(C)) {
+        printf("%d ", ColaCircular_First(C));
+        C = ColaCircular_Dequeue(C);
     }
+    printf("\n");
 
-    C.data[C.tail] = d;
-    C.len++;
-    return C;
-}
-
-ColaCircular ColaCircular_Dequeue(ColaCircular C) {
-    if (ColaCircular_esVacia(C)) {
-        printf("La cola está vacía\n");
-        return C;
-    }
-
-    if (C.len == 1) {
-        return ColaCircular_Vacia();
-    }
-
-    C.head = (C.head + 1) % TAM;
-    C.len--;
-    return C;
-}
-
-int ColaCircular_First(ColaCircular C) {
-    if (ColaCircular_esVacia(C)) {
-        printf("La cola está vacía\n");
-        return -1; // Valor de error
-    }
-    return C.data[C.head];
-}
-
-int ColaCircular_Last(ColaCircular C) {
-    if (ColaCircular_esVacia(C)) {
-        printf("La cola está vacía\n");
-        return -1; // Valor de error
-    }
-    return C.data[C.tail];
+    return 0;
 }
